@@ -7,7 +7,7 @@ def get_pomodoro_proxy():
 
 
 def format_time(seconds):
-    return "{minutes}:{seconds}".format(
+    return "{minutes:02d}:{seconds:02d}".format(
         minutes=math.floor(seconds / 60),
         seconds=math.floor(seconds % 60)
     )
@@ -32,6 +32,7 @@ def extract_pomodoro_data(pomodoro):
         "state": pomodoro.State
     }
 
+
 def format_pomodoro_data(pomodoro_data):
     return {
         "elapsed": format_time(pomodoro_data["elapsed"]),
@@ -40,6 +41,7 @@ def format_pomodoro_data(pomodoro_data):
         "is_paused": format_is_paused(pomodoro_data["is_paused"]),
         "state": format_state(pomodoro_data["state"]),
     }
+
 
 def format_output(formatted_pomodoro_data):
     return "{state} {remaining} {is_paused}".format(**formatted_pomodoro_data)
