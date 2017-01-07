@@ -21,6 +21,7 @@ def format_state(state):
     return {
         "pomodoro": "Pomodoro",
         "break": "Break",
+        "long-break": "Long Break",
     }[state]
 
 
