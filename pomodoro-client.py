@@ -45,9 +45,12 @@ def format_pomodoro_data(pomodoro_data):
 
 
 def format_output(pomodoro_data):
-    return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
-        pomodoro_data
-    ))
+    if pomodoro_data["state"] != "null":
+        return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
+            pomodoro_data
+        ))
+    else:
+        return ""
 
 
 def main():
