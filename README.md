@@ -6,6 +6,9 @@ i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it su
 - View timer status in a terminal, and therefore
 - Show timer status on i3bar
 
+Here's what i3-gnome-pomodoro looks like on my i3bar:
+![Pomodoro 24:45 |  075%    uvsFvTK7SffCNaP9 |  |    100% |    100% |    55°C |  24.6 GB |    01. 07    23.19 |  70%](screenshot.png?raw=true)
+
 ## Usage
 ### Terminal
 Timer status can be viewed by simply running `python pomodoro-clienty.py`. Example output:
