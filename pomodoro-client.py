@@ -44,15 +44,16 @@ def format_pomodoro_data(pomodoro_data):
     }
 
 
-def format_output(formatted_pomodoro_data):
-    return "{state} {remaining} {is_paused}".format(**formatted_pomodoro_data)
+def format_output(pomodoro_data):
+    return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
+        pomodoro_data
+    ))
 
 
 def main():
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
-    formatted_pomodoro_data = format_pomodoro_data(pomodoro_data)
-    print(format_output(formatted_pomodoro_data))
+    print(format_output(pomodoro_data))
 
 
 if __name__ == "__main__":
