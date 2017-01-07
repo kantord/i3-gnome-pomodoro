@@ -14,7 +14,7 @@ def format_time(seconds):
 
 
 def format_is_paused(is_paused):
-    return " PAUSED" if is_paused else ""
+    return " PAUSED " if is_paused else ""
 
 
 def format_state(state):
