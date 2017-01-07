@@ -38,3 +38,12 @@ And then restart i3 so the changes be in effect right away:
     $ i3-msg restart
 
 If you want to use an i3status replacement, please follow its respective documentation to get information about how you can use i3-gnome-pomodoro.
+
+### Refresh rate
+i3-gnome-pomodoro displays a countdown timer on i3bar. If you use i3status, setting `resfresh_rate` in your i3status configuration can probably result in a better user experience. I personally use this configuration:
+
+```
+general {
+    interval = 1
+}
+```
