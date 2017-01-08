@@ -1,10 +1,19 @@
 import math
 from pydbus import SessionBus
+from gi.repository import GLib
 import click
 
 
+bus = SessionBus()
+
+
+def get_notification_proxy():
+    return bus.get(
+        "org.freedesktop.Notifications", "/org/freedesktop/Notifications")
+
+
 def get_pomodoro_proxy():
-    return SessionBus().get("org.gnome.Pomodoro", "/org/gnome/Pomodoro")
+    return bus.get("org.gnome.Pomodoro", "/org/gnome/Pomodoro")
 
 
 def format_time(seconds):
@@ -100,6 +109,33 @@ def toggle():
         pomodoro.Pause()
 
 
+def dunst_action(action):
+    notify = get_notification_proxy()
+    notify.Notify("", 0, "", action, "", "", "", 0)
+
+
+def stop_dunst():
+    dunst_action("DUNST_COMMAND_PAUSE")
+
+
+def start_dunst():
+    dunst_action("DUNST_COMMAND_RESUME")
+
+
+def handle_state(state, old_state):
+    if state["name"] == "pomodoro":
+        stop_dunst()
+    else:
+        start_dunst()
+
+
+@click.command()
+def deamon():
+    pomodoro = get_pomodoro_proxy()
+    pomodoro.StateChanged.connect(handle_state)
+    GLib.MainLoop().run()
+
+
 main.add_command(status)
 main.add_command(pause)
 main.add_command(resume)
@@ -107,6 +143,7 @@ main.add_command(start)
 main.add_command(skip)
 main.add_command(reset)
 main.add_command(toggle)
+main.add_command(deamon)
 
 if __name__ == "__main__":
     main()

@@ -7,6 +7,7 @@ i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it su
 - Show timer status on i3bar
 - Control pomodoro state in a terminal, and therefore
 - Control pomodoro state using bindsym (keyboard and mouse shortcuts)
+- Suppressing dunst desktop notifications while a pomodoro is active and showing them when the break starts
 
 Here's what i3-gnome-pomodoro looks like on my i3bar:
 ![Pomodoro 24:45 |  075%    uvsFvTK7SffCNaP9 |  |    100% |    100% |    55°C |  24.6 GB |    01. 07    23.19 |  70%](screenshot.png?raw=true)
@@ -66,4 +67,14 @@ bindsym $mod+F9 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py start"
 bindsym $mod+F10 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py toggle"
 bindsym $mod+F11 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py skip"
 bindsym $mod+F12 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py stop"
+```
+
+
+### Suppressing dunst notifications while focusing
+i3-gnome-pomodoro has a daemon that can suppress dunst notifications while a
+pomodoro is active. After your pomodoro is over, dunst still delivers delayed
+notifications. To use this daemon, launch it manually when needed or add this
+to your i3 configuration to launch it on startup:
+```
+exec python ~/repos/i3-gnome-/pomodoro-client.py deamon &
 ```
