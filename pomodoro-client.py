@@ -91,12 +91,22 @@ def reset():
     get_pomodoro_proxy().Reset()
 
 
+@click.command()
+def toggle():
+    pomodoro = get_pomodoro_proxy()
+    if pomodoro.IsPaused:
+        pomodoro.Resume()
+    else:
+        pomodoro.Pause()
+
+
 main.add_command(status)
 main.add_command(pause)
 main.add_command(resume)
 main.add_command(start)
 main.add_command(skip)
 main.add_command(reset)
+main.add_command(toggle)
 
 if __name__ == "__main__":
     main()

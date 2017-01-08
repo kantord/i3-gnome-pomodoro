@@ -19,7 +19,7 @@ Timer status can be viewed by simply running `python pomodoro-clienty.py`. Examp
     Pomodoro 15:35
 
 The timer state can be manipulated using the commands `pause`, `resume`, `start`,
-`stop`, `skip` and `reset`. For example:
+`stop`, `skip`, `toggle` and `reset`. For example:
 
     $ python pomodoro-client.py pause
 
