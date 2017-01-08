@@ -59,3 +59,11 @@ general {
 }
 ```
 
+### Keyboard shortcuts
+I use the following key bindings in my i3 config:
+```
+bindsym $mod+F9 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py start"
+bindsym $mod+F10 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py toggle"
+bindsym $mod+F11 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py skip"
+bindsym $mod+F12 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py stop"
+```
