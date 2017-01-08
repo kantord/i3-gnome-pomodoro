@@ -5,6 +5,8 @@ Integrate gnome-pomodoro into i3
 i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it supports the following features:
 - View timer status in a terminal, and therefore
 - Show timer status on i3bar
+- Control pomodoro state in a terminal, and therefore
+- Control pomodoro state using bindsym (keyboard and mouse shortcuts)
 
 Here's what i3-gnome-pomodoro looks like on my i3bar:
 ![Pomodoro 24:45 |  075%    uvsFvTK7SffCNaP9 |  |    100% |    100% |    55°C |  24.6 GB |    01. 07    23.19 |  70%](screenshot.png?raw=true)
@@ -13,8 +15,14 @@ Here's what i3-gnome-pomodoro looks like on my i3bar:
 ### Terminal
 Timer status can be viewed by simply running `python pomodoro-clienty.py`. Example output:
 
-    $ python pomodoro-client.py
+    $ python pomodoro-client.py status
     Pomodoro 15:35
+
+The timer state can be manipulated using the commands `pause`, `resume`, `start`,
+`stop`, `skip` and `reset`. For example:
+
+    $ python pomodoro-client.py pause
+
 
 ### i3bar
 Unfortunately, i3status cannot be used to display a custom feature on i3bar. However, another application can use i3status to collect information and combine it with custom features. A very simple way to do that is to create a script in this fashion:
@@ -24,7 +32,7 @@ Unfortunately, i3status cannot be used to display a custom feature on i3bar. How
 i3status -c ~/.i3/i3status.conf | while :
 do
   read line
-  pomodoro=`python ~/repos/i3-gnome-pomodoro/pomodoro-client.py`
+  pomodoro=`python ~/repos/i3-gnome-pomodoro/pomodoro-client.py status`
   echo "$pomodoro| $line" || exit 1
 done
 ```
@@ -50,3 +58,4 @@ general {
     interval = 1
 }
 ```
+

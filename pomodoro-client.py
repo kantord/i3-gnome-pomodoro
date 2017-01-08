@@ -1,5 +1,6 @@
 import math
 from pydbus import SessionBus
+import click
 
 
 def get_pomodoro_proxy():
@@ -53,11 +54,49 @@ def format_output(pomodoro_data):
         return ""
 
 
+@click.group()
 def main():
+    pass
+
+
+@click.command()
+def status():
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
-    print(format_output(pomodoro_data))
+    click.echo(format_output(pomodoro_data))
 
+
+@click.command()
+def pause():
+    get_pomodoro_proxy().Pause()
+
+
+@click.command()
+def resume():
+    get_pomodoro_proxy().Resume()
+
+
+@click.command()
+def start():
+    get_pomodoro_proxy().Start()
+
+
+@click.command()
+def skip():
+    get_pomodoro_proxy().Skip()
+
+
+@click.command()
+def reset():
+    get_pomodoro_proxy().Reset()
+
+
+main.add_command(status)
+main.add_command(pause)
+main.add_command(resume)
+main.add_command(start)
+main.add_command(skip)
+main.add_command(reset)
 
 if __name__ == "__main__":
     main()
