@@ -91,6 +91,11 @@ def start():
 
 
 @click.command()
+def stop():
+    get_pomodoro_proxy().Stop()
+
+
+@click.command()
 def skip():
     get_pomodoro_proxy().Skip()
 
@@ -140,6 +145,7 @@ main.add_command(status)
 main.add_command(pause)
 main.add_command(resume)
 main.add_command(start)
+main.add_command(stop)
 main.add_command(skip)
 main.add_command(reset)
 main.add_command(toggle)
