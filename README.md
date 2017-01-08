@@ -10,7 +10,7 @@ i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it su
 - Show timer status on i3bar
 - Control pomodoro state in a terminal, and therefore
 - Control pomodoro state using bindsym (keyboard and mouse shortcuts)
-- Suppressing dunst desktop notifications while a pomodoro is active and showing them when the break starts
+- _Optionally_ suppressing dunst desktop notifications while a pomodoro is active and showing them when the break starts
 
 ## Usage and setup
 ### Dependencies
