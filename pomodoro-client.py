@@ -144,7 +144,7 @@ def create_workspace_policy(disabled_during_pomodoro):
     def allowed_workspace(number):
         pomodoro = get_pomodoro_proxy()
         if pomodoro.State == "pomodoro" and pomodoro.IsPaused == False:
-            return number != disabled_during_pomodoro
+            return number not in disabled_during_pomodoro
         else:
             return True
 
@@ -165,7 +165,7 @@ def handle_workspace_focus(i3, i3_state, allowed_workspace):
 
 
 def i3_daemon(disabled_during_pomodoro):
-    def daemon():
+    def generated_deamon():
         workspace_policy = create_workspace_policy(disabled_during_pomodoro)
         i3 = i3ipc.Connection()
         i3_state = {
@@ -175,7 +175,7 @@ def i3_daemon(disabled_during_pomodoro):
             i3, i3_state, workspace_policy))
         i3.main()
 
-    return deamon
+    return generated_deamon
 
 
 def pomodoro_daemon():
