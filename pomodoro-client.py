@@ -1,7 +1,9 @@
 import math
+from threading import Thread
 from pydbus import SessionBus
 from gi.repository import GLib
 import click
+import i3ipc
 
 
 bus = SessionBus()
@@ -134,12 +136,62 @@ def handle_state(state, old_state):
         start_dunst()
 
 
-@click.command()
-def deamon():
+def get_focused_workspace(i3):
+    return i3.get_tree().find_focused().workspace()
+
+
+def create_workspace_policy(disabled_during_pomodoro):
+    def allowed_workspace(number):
+        pomodoro = get_pomodoro_proxy()
+        if pomodoro.State == "pomodoro" and pomodoro.IsPaused == False:
+            return number != disabled_during_pomodoro
+        else:
+            return True
+
+    return allowed_workspace
+
+
+def activate_workspace(i3, name):
+    i3.command("workspace %s" % name)
+
+
+def handle_workspace_focus(i3, i3_state, allowed_workspace):
+    def handler(self, e):
+        if not allowed_workspace(e.current.num):
+            activate_workspace(i3, i3_state["focused_workspace_name"])
+        i3_state["focused_workspace_name"] = e.current.name
+
+    return handler
+
+
+def i3_daemon(disabled_during_pomodoro):
+    def daemon():
+        workspace_policy = create_workspace_policy(disabled_during_pomodoro)
+        i3 = i3ipc.Connection()
+        i3_state = {
+            "focused_workspace_name": get_focused_workspace(i3).name
+        }
+        i3.on('workspace::focus', handle_workspace_focus(
+            i3, i3_state, workspace_policy))
+        i3.main()
+
+    return deamon
+
+
+def pomodoro_daemon():
     pomodoro = get_pomodoro_proxy()
     pomodoro.StateChanged.connect(handle_state)
     GLib.MainLoop().run()
 
+
+@click.command()
+def deamon():
+    disabled_during_pomodoro = [1, 10]
+    daemon_commands = [i3_daemon(disabled_during_pomodoro), pomodoro_daemon]
+    threads = [Thread(target=command) for command in daemon_commands]
+    for thread in threads:
+        thread.run()
+        thread.join()
 
 main.add_command(status)
 main.add_command(pause)
