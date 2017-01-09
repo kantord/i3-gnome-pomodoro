@@ -185,9 +185,10 @@ def pomodoro_daemon():
 
 
 @click.command()
-def deamon():
-    disabled_during_pomodoro = [1, 10]
-    daemon_commands = [i3_daemon(disabled_during_pomodoro), pomodoro_daemon]
+@click.argument('workspaces_disabled_during_pomodoro', nargs=-1, type=int)
+def deamon(workspaces_disabled_during_pomodoro):
+    daemon_commands = [
+        i3_daemon(workspaces_disabled_during_pomodoro), pomodoro_daemon]
     threads = [Thread(target=command) for command in daemon_commands]
     for thread in threads:
         thread.run()
