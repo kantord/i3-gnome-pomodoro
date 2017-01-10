@@ -1,6 +1,6 @@
 import math
 from threading import Thread
-from subprocess import call
+from subprocess import Popen
 from pydbus import SessionBus
 from gi.repository import GLib
 import click
@@ -138,7 +138,7 @@ def handle_state(state, old_state):
 
 def show_message(message, is_error=False):
     type_ = "error" if is_error else "warning"
-    call('i3-nagbar -t %s -m "%s"' % (type_, message), shell=True)
+    Popen('i3-nagbar -t %s -m "%s"' % (type_, message), shell=True)
 
 def get_focused_workspace(i3):
     return i3.get_tree().find_focused().workspace()
