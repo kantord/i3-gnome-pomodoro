@@ -102,3 +102,11 @@ exec python ~/repos/i3-gnome-/pomodoro-client.py deamon 9 10 &
 
 This works even if you label your workspaces. For example, I use the name "9: mail"
 for my email workspace but I still reference it with "9".
+
+I also like to have a nagbar warning shown when I still try to access a distracting workspace:
+
+```
+exec python ~/repos/i3-gnome-/pomodoro-client.py deamon 9 10 --nagbar &
+```
+
+
