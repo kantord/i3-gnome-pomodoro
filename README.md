@@ -4,6 +4,9 @@ Integrate gnome-pomodoro into i3
 Here's what i3-gnome-pomodoro looks like on my i3bar:
 ![Pomodoro 24:45 |  075%    uvsFvTK7SffCNaP9 |  |    100% |    100% |    55°C |  24.6 GB |    01. 07    23.19 |  70%](screenshot.png?raw=true)
 
+You can optionally disable certain workspaces during a pomodoro. They are still accessible when you pause a pomodoro.
+![Workspace 10: mail is disabled during a pomodoro.](screenshot_nagbar.png)
+
 ## About
 i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it supports the following features:
 - View timer status in a terminal, and therefore
