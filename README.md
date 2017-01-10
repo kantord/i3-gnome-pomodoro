@@ -10,13 +10,16 @@ i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it su
 - Show timer status on i3bar
 - Control pomodoro state in a terminal, and therefore
 - Control pomodoro state using bindsym (keyboard and mouse shortcuts)
-- _Optionally_ suppressing dunst desktop notifications while a pomodoro is active and showing them when the break starts
+- *Optionally* suppressing dunst desktop notifications while a pomodoro is active and showing them when the break starts
+- *Optionally* disabling specific workspaces (such as instant messaging) while you are on a pomodoro. You can still access those workspaces, if you pause the pomodoro.
+- *Optionally* displaying a nagbar warning if you try to access a workspace that you have disabled during your pomodoro.
 
 ## Usage and setup
 ### Dependencies
 i3-gnome-pomodoro needs the following Python packages to be installed:
 * click
 * pydbus
+* i3ipc
 
 You can install them using `pip install -r requirements.txt`. Might require `sudo` when installing system-wide. Obviously, you'll also need to have [gnome-pomodoro](http://gnomepomodoro.org/) installed already.
 That's it. i3-gnome-pomodoro then should work from the terminal out-of-the-box. But to make it more integrated into i3 and more convenient to use, you might want to set it up with i3bar and put key bindings into your i3 config. So please read along!
@@ -78,11 +81,24 @@ bindsym $mod+F12 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py stop"
 ```
 
 
-### Suppressing dunst notifications while focusing
+### Suppressing dunst notifications and disabling workspaces
 i3-gnome-pomodoro has a daemon that can suppress dunst notifications while a
 pomodoro is active. After your pomodoro is over, dunst still delivers delayed
 notifications. To use this daemon, launch it manually when needed or add this
 to your i3 configuration to launch it on startup:
+
 ```
 exec python ~/repos/i3-gnome-/pomodoro-client.py deamon &
 ```
+
+If you want to disable any workspaces during your pomodoro, you can do so by
+specifying there workspace number. For example, I generally use workspace 10
+for IM, Social Media and Workspace 9 for email. Therefore I want them disabled
+while I'm on a pomodoro. So, I execute my deamon like this:
+
+```
+exec python ~/repos/i3-gnome-/pomodoro-client.py deamon 9 10 &
+```
+
+This works even if you label your workspaces. For example, I use the name "9: mail"
+for my email workspace but I still reference it with "9".

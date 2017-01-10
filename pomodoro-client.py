@@ -1,7 +1,10 @@
 import math
+from threading import Thread
+from subprocess import call
 from pydbus import SessionBus
 from gi.repository import GLib
 import click
+import i3ipc
 
 
 bus = SessionBus()
@@ -133,13 +136,71 @@ def handle_state(state, old_state):
     else:
         start_dunst()
 
+def show_message(message, is_error=False):
+    type_ = "error" if is_error else "warning"
+    call('i3-nagbar -t %s -m "%s"' % (type_, message), shell=True)
 
-@click.command()
-def deamon():
+def get_focused_workspace(i3):
+    return i3.get_tree().find_focused().workspace()
+
+
+def create_workspace_policy(disabled_during_pomodoro):
+    def allowed_workspace(number):
+        pomodoro = get_pomodoro_proxy()
+        if pomodoro.State == "pomodoro" and pomodoro.IsPaused == False:
+            return number not in disabled_during_pomodoro
+        else:
+            return True
+
+    return allowed_workspace
+
+
+def activate_workspace(i3, name):
+    i3.command("workspace %s" % name)
+
+
+def handle_workspace_focus(i3, i3_state, allowed_workspace, nagbar):
+    def handler(self, e):
+        if not allowed_workspace(e.current.num):
+            activate_workspace(i3, i3_state["focused_workspace_name"])
+            if nagbar:
+                show_message("Workspace %s is not allowed during a pomodoro"
+                             % e.current.name)
+        i3_state["focused_workspace_name"] = e.current.name
+
+    return handler
+
+
+def i3_daemon(disabled_during_pomodoro, nagbar):
+    def generated_deamon():
+        workspace_policy = create_workspace_policy(disabled_during_pomodoro)
+        i3 = i3ipc.Connection()
+        i3_state = {
+            "focused_workspace_name": get_focused_workspace(i3).name
+        }
+        i3.on('workspace::focus', handle_workspace_focus(
+            i3, i3_state, workspace_policy, nagbar))
+        i3.main()
+
+    return generated_deamon
+
+
+def pomodoro_daemon():
     pomodoro = get_pomodoro_proxy()
     pomodoro.StateChanged.connect(handle_state)
     GLib.MainLoop().run()
 
+
+@click.command()
+@click.argument('workspaces_disabled_during_pomodoro', nargs=-1, type=int)
+@click.option('--nagbar/--no-nagbar', default=False)
+def deamon(workspaces_disabled_during_pomodoro, nagbar):
+    daemon_commands = [
+        i3_daemon(workspaces_disabled_during_pomodoro, nagbar), pomodoro_daemon]
+    threads = [Thread(target=command) for command in daemon_commands]
+    for thread in threads:
+        thread.run()
+        thread.join()
 
 main.add_command(status)
 main.add_command(pause)
