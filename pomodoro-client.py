@@ -172,7 +172,7 @@ def handle_workspace_focus(i3, i3_state, allowed_workspace, nagbar):
 
 
 def i3_daemon(disabled_during_pomodoro, nagbar):
-    def generated_deamon():
+    def generated_daemon():
         workspace_policy = create_workspace_policy(disabled_during_pomodoro)
         i3 = i3ipc.Connection()
         i3_state = {
@@ -182,7 +182,7 @@ def i3_daemon(disabled_during_pomodoro, nagbar):
             i3, i3_state, workspace_policy, nagbar))
         i3.main()
 
-    return generated_deamon
+    return generated_daemon
 
 
 def pomodoro_daemon():
@@ -194,7 +194,7 @@ def pomodoro_daemon():
 @click.command()
 @click.argument('workspaces_disabled_during_pomodoro', nargs=-1, type=int)
 @click.option('--nagbar/--no-nagbar', default=False)
-def deamon(workspaces_disabled_during_pomodoro, nagbar):
+def daemon(workspaces_disabled_during_pomodoro, nagbar):
     daemon_commands = [
         i3_daemon(workspaces_disabled_during_pomodoro, nagbar), pomodoro_daemon]
     threads = [Thread(target=command) for command in daemon_commands]
@@ -210,7 +210,7 @@ main.add_command(stop)
 main.add_command(skip)
 main.add_command(reset)
 main.add_command(toggle)
-main.add_command(deamon)
+main.add_command(daemon)
 
 if __name__ == "__main__":
     main()
