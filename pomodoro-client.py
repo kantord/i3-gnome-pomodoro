@@ -199,7 +199,10 @@ def daemon(workspaces_disabled_during_pomodoro, nagbar):
         i3_daemon(workspaces_disabled_during_pomodoro, nagbar), pomodoro_daemon]
     threads = [Thread(target=command) for command in daemon_commands]
     for thread in threads:
-        thread.run()
+        thread.daemon=True
+        thread.start()
+
+    for thread in threads:
         thread.join()
 
 main.add_command(status)
