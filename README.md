@@ -91,16 +91,16 @@ notifications. To use this daemon, launch it manually when needed or add this
 to your i3 configuration to launch it on startup:
 
 ```
-exec python ~/repos/i3-gnome-/pomodoro-client.py daemon &
+exec python ~/repos/i3-gnome-/pomodoro-client.py daemon &
 ```
 
 If you want to disable any workspaces during your pomodoro, you can do so by
 specifying there workspace number. For example, I generally use workspace 10
 for IM, Social Media and Workspace 9 for email. Therefore I want them disabled
-while I'm on a pomodoro. So, I execute my daemon like this:
+while I'm on a pomodoro. So, I execute my daemon like this:
 
 ```
-exec python ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 &
+exec python ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 &
 ```
 
 This works even if you label your workspaces. For example, I use the name "9: mail"
@@ -109,7 +109,7 @@ for my email workspace but I still reference it with "9".
 I also like to have a nagbar warning shown when I still try to access a distracting workspace:
 
 ```
-exec python ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 --nagbar &
+exec python ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 --nagbar &
 ```
 
 
