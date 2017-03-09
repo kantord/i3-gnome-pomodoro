@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import math
 from threading import Thread
 from subprocess import Popen
