@@ -27,6 +27,8 @@ i3-gnome-pomodoro needs the following Python packages to be installed:
 You can install them using `pip install -r requirements.txt`. Might require `sudo` when installing system-wide. Obviously, you'll also need to have [gnome-pomodoro](http://gnomepomodoro.org/) installed already.
 That's it. i3-gnome-pomodoro then should work from the terminal out-of-the-box. But to make it more integrated into i3 and more convenient to use, you might want to set it up with i3bar and put key bindings into your i3 config. So please read along!
 
+I run i3-gnome-pomodoro on Arch Linux with Python 3.6.4, but it should work with other Python 3 binaries as well.
+
 ### Terminal
 Timer status can be viewed by simply running `python pomodoro-client.py`. Example output:
 
