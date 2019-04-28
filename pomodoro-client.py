@@ -18,7 +18,10 @@ def get_notification_proxy():
 
 
 def get_pomodoro_proxy():
-    return bus.get("org.gnome.Pomodoro", "/org/gnome/Pomodoro")
+    try:
+        return bus.get("org.gnome.Pomodoro", "/org/gnome/Pomodoro")
+    except GLib.Error:
+        return None
 
 
 def format_time(seconds):
@@ -76,8 +79,11 @@ def main():
 @click.command()
 def status():
     pomodoro = get_pomodoro_proxy()
-    pomodoro_data = extract_pomodoro_data(pomodoro)
-    click.echo(format_output(pomodoro_data))
+    if pomodoro is not None:
+        pomodoro_data = extract_pomodoro_data(pomodoro)
+        click.echo(format_output(pomodoro_data))
+    else:
+        click.echo("---")
 
 
 @click.command()
