@@ -20,6 +20,7 @@ i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it su
 ## Usage and setup
 ### Dependencies
 i3-gnome-pomodoro needs the following Python packages to be installed:
+* pygobject
 * click
 * pydbus
 * i3ipc
