@@ -83,46 +83,73 @@ def status():
         pomodoro_data = extract_pomodoro_data(pomodoro)
         click.echo(format_output(pomodoro_data))
     else:
-        click.echo("---")
+        click.echo("gnome-pomodoro is not running")
 
 
 @click.command()
 def pause():
-    get_pomodoro_proxy().Pause()
+    pomodoro = get_pomodoro_proxy()
+    if pomodoro is not None:
+        pomodoro.Pause()
+    else:
+        click.echo("gnome-pomodoro is not running")
 
 
 @click.command()
 def resume():
-    get_pomodoro_proxy().Resume()
+    pomodoro = get_pomodoro_proxy()
+    if pomodoro is not None:
+        pomodoro.Resume()
+    else:
+        click.echo("gnome-pomodoro is not running")
 
 
 @click.command()
 def start():
-    get_pomodoro_proxy().Start()
+    pomodoro = get_pomodoro_proxy()
+    if pomodoro is not None:
+        pomodoro.Start()
+    else:
+        click.echo("gnome-pomodoro is not running")
 
 
 @click.command()
 def stop():
-    get_pomodoro_proxy().Stop()
+    pomodoro = get_pomodoro_proxy()
+    if pomodoro is not None:
+        pomodoro.Stop()
+    else:
+        click.echo("gnome-pomodoro is not running")
 
 
 @click.command()
 def skip():
-    get_pomodoro_proxy().Skip()
+    pomodoro = get_pomodoro_proxy()
+    if pomodoro is not None:
+        pomodoro.Skip()
+    else:
+        click.echo("gnome-pomodoro is not running")
 
 
 @click.command()
 def reset():
-    get_pomodoro_proxy().Reset()
+    pomodoro = get_pomodoro_proxy()
+    if pomodoro is not None:
+        pomodoro.Reset()
+    else:
+        click.echo("gnome-pomodoro is not running")
 
 
 @click.command()
 def toggle():
     pomodoro = get_pomodoro_proxy()
-    if pomodoro.IsPaused:
-        pomodoro.Resume()
+    if pomodoro is not None:
+        if pomodoro.IsPaused:
+            pomodoro.Resume()
+        else:
+            pomodoro.Pause()
     else:
-        pomodoro.Pause()
+        click.echo("gnome-pomodoro is not running")
 
 
 def dunst_action(action):
@@ -155,6 +182,9 @@ def get_focused_workspace(i3):
 def create_workspace_policy(disabled_during_pomodoro):
     def allowed_workspace(number):
         pomodoro = get_pomodoro_proxy()
+        if pomodoro is None:
+            return True
+
         if pomodoro.State == "pomodoro" and pomodoro.IsPaused == False:
             return number not in disabled_during_pomodoro
         else:
