@@ -85,80 +85,71 @@ def command_with_pomodoro_proxy(cmd):
     return command_wrapper
 
 
-@command_with_pomodoro_proxy
-def run_status(pomodoro):
-    pomodoro_data = extract_pomodoro_data(pomodoro)
-    click.echo(format_output(pomodoro_data))
-
 @click.command()
 def status():
+    @command_with_pomodoro_proxy
+    def run_status(pomodoro):
+        pomodoro_data = extract_pomodoro_data(pomodoro)
+        click.echo(format_output(pomodoro_data))
     run_status(None)
-
 
 @click.command()
 def pause():
-    pomodoro = get_pomodoro_proxy()
-    if pomodoro is not None:
+    @command_with_pomodoro_proxy
+    def run_pause(pomodoro):
         pomodoro.Pause()
-    else:
-        click.echo("gnome-pomodoro is not running")
+    run_pause(None)
 
 
 @click.command()
 def resume():
-    pomodoro = get_pomodoro_proxy()
-    if pomodoro is not None:
+    @command_with_pomodoro_proxy
+    def run_resume(pomodoro):
         pomodoro.Resume()
-    else:
-        click.echo("gnome-pomodoro is not running")
+    run_resume(None)
 
 
 @click.command()
 def start():
-    pomodoro = get_pomodoro_proxy()
-    if pomodoro is not None:
+    @command_with_pomodoro_proxy
+    def run_start(pomodoro):
         pomodoro.Start()
-    else:
-        click.echo("gnome-pomodoro is not running")
+    run_start(None)
 
 
 @click.command()
 def stop():
-    pomodoro = get_pomodoro_proxy()
-    if pomodoro is not None:
+    @command_with_pomodoro_proxy
+    def run_stop(pomodoro):
         pomodoro.Stop()
-    else:
-        click.echo("gnome-pomodoro is not running")
+    run_stop(None)
 
 
 @click.command()
 def skip():
-    pomodoro = get_pomodoro_proxy()
-    if pomodoro is not None:
+    @command_with_pomodoro_proxy
+    def run_skip(pomodoro):
         pomodoro.Skip()
-    else:
-        click.echo("gnome-pomodoro is not running")
+    run_skip(None)
 
 
 @click.command()
 def reset():
-    pomodoro = get_pomodoro_proxy()
-    if pomodoro is not None:
+    @command_with_pomodoro_proxy
+    def run_reset(pomodoro):
         pomodoro.Reset()
-    else:
-        click.echo("gnome-pomodoro is not running")
+    run_reset(None)
 
 
 @click.command()
 def toggle():
-    pomodoro = get_pomodoro_proxy()
-    if pomodoro is not None:
+    @command_with_pomodoro_proxy
+    def run_toggle(pomodoro):
         if pomodoro.IsPaused:
             pomodoro.Resume()
         else:
             pomodoro.Pause()
-    else:
-        click.echo("gnome-pomodoro is not running")
+    run_toggle(None)
 
 
 def dunst_action(action):
