@@ -75,15 +75,24 @@ def format_output(pomodoro_data):
 def main():
     pass
 
+def command_with_pomodoro_proxy(cmd):
+    def command_wrapper(pomodoro):
+        pomodoro = get_pomodoro_proxy()
+        if pomodoro is not None:
+            cmd(pomodoro)
+        else:
+            click.echo("gnome-pomodoro is not running")
+    return command_wrapper
+
+
+@command_with_pomodoro_proxy
+def run_status(pomodoro):
+    pomodoro_data = extract_pomodoro_data(pomodoro)
+    click.echo(format_output(pomodoro_data))
 
 @click.command()
 def status():
-    pomodoro = get_pomodoro_proxy()
-    if pomodoro is not None:
-        pomodoro_data = extract_pomodoro_data(pomodoro)
-        click.echo(format_output(pomodoro_data))
-    else:
-        click.echo("gnome-pomodoro is not running")
+    run_status(None)
 
 
 @click.command()
