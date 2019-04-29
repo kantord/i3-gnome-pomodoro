@@ -75,75 +75,87 @@ def format_output(pomodoro_data):
 def main():
     pass
 
-def command_with_pomodoro_proxy(cmd):
-    def command_wrapper(pomodoro):
-        pomodoro = get_pomodoro_proxy()
-        if pomodoro is not None:
-            cmd(pomodoro)
-        else:
-            click.echo("gnome-pomodoro is not running")
-    return command_wrapper
+def command_with_pomodoro_proxy(nagbar):
+    def wrapper(cmd):
+        def command_wrapper(pomodoro):
+            pomodoro = get_pomodoro_proxy()
+            if pomodoro is not None:
+                cmd(pomodoro)
+            else:
+                if nagbar:
+                    show_message("(i3-gnome-pomodoro) Error: gnome-pomodoro is not running", is_error=True)
+                click.echo("")
+        return command_wrapper
+    return wrapper
 
 
 @click.command()
-def status():
-    @command_with_pomodoro_proxy
+@click.option('--nagbar/--no-nagbar', default=False)
+def status(nagbar):
+    @command_with_pomodoro_proxy(nagbar)
     def run_status(pomodoro):
         pomodoro_data = extract_pomodoro_data(pomodoro)
         click.echo(format_output(pomodoro_data))
     run_status(None)
 
 @click.command()
-def pause():
-    @command_with_pomodoro_proxy
+@click.option('--nagbar/--no-nagbar', default=False)
+def pause(nagbar):
+    @command_with_pomodoro_proxy(nagbar)
     def run_pause(pomodoro):
         pomodoro.Pause()
     run_pause(None)
 
 
 @click.command()
-def resume():
-    @command_with_pomodoro_proxy
+@click.option('--nagbar/--no-nagbar', default=False)
+def resume(nagbar):
+    @command_with_pomodoro_proxy(nagbar)
     def run_resume(pomodoro):
         pomodoro.Resume()
     run_resume(None)
 
 
 @click.command()
-def start():
-    @command_with_pomodoro_proxy
+@click.option('--nagbar/--no-nagbar', default=False)
+def start(nagbar):
+    @command_with_pomodoro_proxy(nagbar)
     def run_start(pomodoro):
         pomodoro.Start()
     run_start(None)
 
 
 @click.command()
-def stop():
-    @command_with_pomodoro_proxy
+@click.option('--nagbar/--no-nagbar', default=False)
+def stop(nagbar):
+    @command_with_pomodoro_proxy(nagbar)
     def run_stop(pomodoro):
         pomodoro.Stop()
     run_stop(None)
 
 
 @click.command()
-def skip():
-    @command_with_pomodoro_proxy
+@click.option('--nagbar/--no-nagbar', default=False)
+def skip(nagbar):
+    @command_with_pomodoro_proxy(nagbar)
     def run_skip(pomodoro):
         pomodoro.Skip()
     run_skip(None)
 
 
 @click.command()
-def reset():
-    @command_with_pomodoro_proxy
+@click.option('--nagbar/--no-nagbar', default=False)
+def reset(nagbar):
+    @command_with_pomodoro_proxy(nagbar)
     def run_reset(pomodoro):
         pomodoro.Reset()
     run_reset(None)
 
 
 @click.command()
-def toggle():
-    @command_with_pomodoro_proxy
+@click.option('--nagbar/--no-nagbar', default=False)
+def toggle(nagbar):
+    @command_with_pomodoro_proxy(nagbar)
     def run_toggle(pomodoro):
         if pomodoro.IsPaused:
             pomodoro.Resume()
