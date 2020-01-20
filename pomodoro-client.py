@@ -65,7 +65,7 @@ def format_output(pomodoro_data):
             pomodoro_data
         ))
     else:
-        return ""
+        return " Pomodoro " # could be changed for the egg icon ""
 
 
 @click.group()
