@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import math
-from threading import Thread
-from subprocess import Popen
-from pydbus import SessionBus
 from gi.repository import GLib
+from pydbus import SessionBus
+from subprocess import Popen
+from threading import Thread
 import click
 import i3ipc
+import math
 
 
 bus = SessionBus()
@@ -99,6 +99,13 @@ def start():
 def stop():
     get_pomodoro_proxy().Stop()
 
+@click.command()
+def start_stop():
+    pomodoro = get_pomodoro_proxy()
+    if pomodoro.State == 'null':
+        pomodoro.Start()
+    elif pomodoro.State == 'pomodoro':
+        pomodoro.Stop()
 
 @click.command()
 def skip():
@@ -212,6 +219,7 @@ main.add_command(pause)
 main.add_command(resume)
 main.add_command(start)
 main.add_command(stop)
+main.add_command(start_stop)
 main.add_command(skip)
 main.add_command(reset)
 main.add_command(toggle)
