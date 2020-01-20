@@ -79,6 +79,19 @@ exec = i3-gnome-pomodoro status
 interval = 1
 ```
 
+with the `i3-gnome-pomodoro status --always` flag thing like the block below, becomes possible
+
+```
+[module/pomodoro]
+type = custom/script
+click-left = i3-gnome-pomodoro toggle
+click-middle = gnome-pomodoro
+click-right = i3-gnome-pomodoro start_stop
+exec = i3-gnome-pomodoro status --always
+interval = 1
+
+```
+
 ### Refresh rate
 i3-gnome-pomodoro displays a countdown timer on i3bar. If you use i3status, setting `resfresh_rate` in your i3status configuration can probably result in a better user experience. I personally use this configuration:
 

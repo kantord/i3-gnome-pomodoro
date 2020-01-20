@@ -59,25 +59,26 @@ def format_pomodoro_data(pomodoro_data):
     }
 
 
-def format_output(pomodoro_data):
+def format_output(pomodoro_data, always):
     if pomodoro_data["state"] != "null":
         return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
             pomodoro_data
         ))
-    else:
-        return ""
+    if always:
+        return "Pomodoro"
+    return ""
 
 
 @click.group()
 def main():
     pass
 
-
 @click.command()
-def status():
+@click.option('--always/--not-always', default=False)
+def status(always):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
-    click.echo(format_output(pomodoro_data))
+    click.echo(format_output(pomodoro_data, always))
 
 
 @click.command()
