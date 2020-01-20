@@ -118,7 +118,7 @@ notifications. To use this daemon, launch it manually when needed or add this
 to your i3 configuration to launch it on startup:
 
 ```
-exec python ~/repos/i3-gnome-/pomodoro-client.py daemon &
+exec python ~/repos/i3-gnome-pomodoro/pomodoro-client.py daemon &
 ```
 
 If you want to disable any workspaces during your pomodoro, you can do so by
