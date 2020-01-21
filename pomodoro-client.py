@@ -32,9 +32,9 @@ def format_is_paused(is_paused):
     return " PAUSED " if is_paused else ""
 
 
-def format_state(state):
+def format_state(state, icon_text):
     return {
-        "pomodoro": "Pomodoro",
+        "pomodoro": icon_text,
         "short-break": "Break",
         "long-break": "Long Break",
     }[state]
@@ -49,23 +49,23 @@ def extract_pomodoro_data(pomodoro):
     }
 
 
-def format_pomodoro_data(pomodoro_data):
+def format_pomodoro_data(pomodoro_data, icon_text):
     return {
         "elapsed": format_time(pomodoro_data["elapsed"]),
         "duration": format_time(pomodoro_data["duration"]),
         "remaining": format_time(pomodoro_data["remaining"]),
         "is_paused": format_is_paused(pomodoro_data["is_paused"]),
-        "state": format_state(pomodoro_data["state"]),
+        "state": format_state(pomodoro_data["state"], icon_text),
     }
 
 
-def format_output(pomodoro_data, always):
+def format_output(pomodoro_data, always, icon_text):
     if pomodoro_data["state"] != "null":
         return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
-            pomodoro_data
+            pomodoro_data, icon_text
         ))
     if always:
-        return "Pomodoro"
+        return icon_text
     return ""
 
 
@@ -75,10 +75,11 @@ def main():
 
 @click.command()
 @click.option('--always/--not-always', default=False)
-def status(always):
+@click.option('--icon-text', default="Pomodoro", help='What to show as icon.')
+def status(always, icon_text):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
-    click.echo(format_output(pomodoro_data, always))
+    click.echo(format_output(pomodoro_data, always, icon_text))
 
 
 @click.command()
@@ -209,7 +210,7 @@ def daemon(workspaces_disabled_during_pomodoro, nagbar):
         i3_daemon(workspaces_disabled_during_pomodoro, nagbar), pomodoro_daemon]
     threads = [Thread(target=command) for command in daemon_commands]
     for thread in threads:
-        thread.daemon=True
+        thread.daemon = True
         thread.start()
 
     for thread in threads:
