@@ -60,6 +60,7 @@ def format_pomodoro_data(pomodoro_data, icon_text):
 
 
 def format_output(pomodoro_data, always, icon_text):
+
     if pomodoro_data["state"] != "null":
         return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
             pomodoro_data, icon_text
@@ -80,6 +81,7 @@ def status(always, icon_text):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
     click.echo(format_output(pomodoro_data, always, icon_text))
+
 
 
 @click.command()
