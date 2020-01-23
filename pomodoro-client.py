@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 from gi.repository import GLib
+from idle_time import X11IdleMonitor as X11
 from pydbus import SessionBus
 from subprocess import Popen
 from threading import Thread
+from time import sleep
 import click
 import i3ipc
 import math
-
 
 bus = SessionBus()
 
@@ -48,7 +49,6 @@ def extract_pomodoro_data(pomodoro):
         "state": pomodoro.State
     }
 
-
 def format_pomodoro_data(pomodoro_data, icon_text):
     return {
         "elapsed": format_time(pomodoro_data["elapsed"]),
@@ -75,13 +75,35 @@ def main():
     pass
 
 @click.command()
+@click.option('--resume-pomodoro/--no-resume-pomodoro', default=False)
+@click.option('--idle-time', default=0.5,
+              help='Minimum idle time before continuing.')
+def pause_ended(resume_pomodoro, idle_time):
+    pomodoro = get_pomodoro_proxy()
+    pomodoro_data = extract_pomodoro_data(pomodoro)
+    pomodoro_data['remaining'] = pomodoro_data['duration'] # end of pause state
+
+    sleep(0.2)
+    monitor = X11()
+    new_pomo_data = extract_pomodoro_data(pomodoro)
+
+    # Check if pomodoro is running
+    l = len(format_output(new_pomo_data, False, ''))
+    if pomodoro_data == new_pomo_data and l != 0:
+        if resume_pomodoro and monitor.get_idle_time() < idle_time:
+            pomodoro.Resume()
+        print(True)
+    else:
+        print(False)
+
+
+@click.command()
 @click.option('--always/--not-always', default=False)
 @click.option('--icon-text', default="Pomodoro", help='What to show as icon.')
 def status(always, icon_text):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
     click.echo(format_output(pomodoro_data, always, icon_text))
-
 
 
 @click.command()
@@ -228,6 +250,7 @@ main.add_command(skip)
 main.add_command(reset)
 main.add_command(toggle)
 main.add_command(daemon)
+main.add_command(pause_ended)
 
 if __name__ == "__main__":
     main()

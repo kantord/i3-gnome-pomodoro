@@ -2,3 +2,4 @@
 *#*
 .mypy_cache
 *flycheck*
+.python-version
