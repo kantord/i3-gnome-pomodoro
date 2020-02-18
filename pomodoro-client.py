@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 from gi.repository import GLib
+from idle_time import X11IdleMonitor as X11
 from pydbus import SessionBus
 from subprocess import Popen
 from threading import Thread
+from time import sleep
 import click
 import i3ipc
 import math
@@ -70,9 +72,26 @@ def format_output(pomodoro_data, always, icon_text):
     return ""
 
 
-@click.group()
-def main():
-    pass
+@click.command(help=
+               """
+               Resumes the next pomodoro upon interaction with the system,
+               after the break has finished.
+               """)
+def auto_resume():
+    pomodoro = get_pomodoro_proxy()
+    pomodoro_data = extract_pomodoro_data(pomodoro)
+    pomodoro_data['remaining'] = pomodoro_data['duration'] # end of pause state
+
+    sleep(0.2)
+    monitor = X11()
+    new_pomo_data = extract_pomodoro_data(pomodoro)
+
+    # Check if pomodoro is running
+    l = len(format_output(new_pomo_data, False, ''))
+    if pomodoro_data == new_pomo_data and l != 0:
+        if  monitor.get_idle_time() < 2:
+            pomodoro.Resume()
+
 
 @click.command()
 @click.option('--always/--not-always', default=False)
@@ -82,7 +101,9 @@ def status(always, icon_text):
     pomodoro_data = extract_pomodoro_data(pomodoro)
     click.echo(format_output(pomodoro_data, always, icon_text))
 
-
+@click.group()
+def main():
+    pass
 
 @click.command()
 def pause():
@@ -228,6 +249,7 @@ main.add_command(skip)
 main.add_command(reset)
 main.add_command(toggle)
 main.add_command(daemon)
+main.add_command(auto_resume)
 
 if __name__ == "__main__":
     main()
