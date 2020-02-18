@@ -20,10 +20,14 @@ i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it su
 ## Usage and setup
 ### Dependencies
 i3-gnome-pomodoro needs the following Python packages to be installed:
-* pygobject
 * click
-* pydbus
+* enum-compat
 * i3ipc
+* idle-time
+* jeepney
+* pycairo
+* pydbus
+* pygobject
 
 You can install them using `pip install -r requirements.txt`. Might require `sudo` when installing system-wide. Obviously, you'll also need to have [gnome-pomodoro](http://gnomepomodoro.org/) installed already.
 That's it. i3-gnome-pomodoro then should work from the terminal out-of-the-box. But to make it more integrated into i3 and more convenient to use, you might want to set it up with i3bar and put key bindings into your i3 config. So please read along!
@@ -37,7 +41,7 @@ Timer status can be viewed by simply running `python pomodoro-client.py`. Exampl
     Pomodoro 15:35
 
 The timer state can be manipulated using the commands `pause`, `resume`, `start`,
-`stop`, `skip`, `toggle` and `reset`. For example:
+`stop`, `skip`, `toggle`, `auto_resume` and `reset`. For example:
 
     $ python pomodoro-client.py pause
 
@@ -79,7 +83,7 @@ exec = i3-gnome-pomodoro status
 interval = 1
 ```
 
-with the `i3-gnome-pomodoro status --always` flag thing like the block below, becomes possible
+with the `i3-gnome-pomodoro status --always` flag a permanent icon appears which makes interactions more duable
 
 ```
 [module/pomodoro]
@@ -89,7 +93,6 @@ click-middle = gnome-pomodoro
 click-right = i3-gnome-pomodoro start_stop
 exec = i3-gnome-pomodoro status --always
 interval = 1
-
 ```
 
 ### Refresh rate
@@ -137,4 +140,25 @@ I also like to have a nagbar warning shown when I still try to access a distract
 
 ```
 exec python ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 --nagbar &
+```
+
+### Continuing after pause like in gnome
+To replicate the feature where the next pomodoro is started when interacting with the computer after a break has been finished, the feature `i3-gnome-pomodoro auto_resume` takes care of this. An example usage is given here:
+
+```
+[module/pomodoro]
+type = custom/script
+exec = ~/pomodoro_setup
+interval = 1
+```
+
+with the file `pomodoro_setup` file
+```
+#!/usr/bin/env bash
+
+# Resume at interaction after break has finished
+i3-gnome-pomodoro pause_ended --resume-pomodoro
+
+# get text for polybar
+i3-gnome-pomodoro status
 ```
