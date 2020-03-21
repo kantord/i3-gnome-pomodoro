@@ -39,9 +39,10 @@ command -v gnome-pomodoro > /dev/null &&
     $(which git) clone https://github.com/kantord/i3-gnome-pomodoro &&
     cd i3-gnome-pomodoro &&
     sudo $(which pip3) install -r requirements.txt --ignore-installed &&
+    sudo rm /usr/bin/i3-gnome-pomodoro >& /dev/null;
     sudo cp pomodoro-client.py /usr/bin/i3-gnome-pomodoro &&
     /usr/bin/i3-gnome-pomodoro status
-) || echo "You don't have gnome-pomodoro installed, you must install it first"
+) || echo "Installation failedd. Please make sure you have gnome-pomodoro installed, you must install it first"
 ```
 
 ### Terminal
