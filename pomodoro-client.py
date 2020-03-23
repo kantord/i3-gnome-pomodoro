@@ -21,11 +21,15 @@ def get_pomodoro_proxy():
     return bus.get("org.gnome.Pomodoro", "/org/gnome/Pomodoro")
 
 
-def format_time(seconds):
-    return "{minutes:02d}:{seconds:02d}".format(
-        minutes=int(math.floor(seconds / 60)),
-        seconds=int(round(seconds % 60))
-    )
+def format_time(seconds, show_seconds):
+    if show_seconds:
+        return "{minutes:02d}:{seconds:02d}".format(
+            minutes=int(math.floor(seconds / 60)),
+            seconds=int(round(seconds % 60))
+        )
+    return "{minutes:02d}m".format(
+            minutes=int(math.floor(seconds / 60)),
+        )
 
 
 def format_is_paused(is_paused):
@@ -49,21 +53,21 @@ def extract_pomodoro_data(pomodoro):
     }
 
 
-def format_pomodoro_data(pomodoro_data, icon_text):
+def format_pomodoro_data(pomodoro_data, icon_text, show_seconds):
     return {
-        "elapsed": format_time(pomodoro_data["elapsed"]),
-        "duration": format_time(pomodoro_data["duration"]),
-        "remaining": format_time(pomodoro_data["remaining"]),
+        "elapsed": format_time(pomodoro_data["elapsed"], show_seconds),
+        "duration": format_time(pomodoro_data["duration"], show_seconds),
+        "remaining": format_time(pomodoro_data["remaining"], show_seconds),
         "is_paused": format_is_paused(pomodoro_data["is_paused"]),
         "state": format_state(pomodoro_data["state"], icon_text),
     }
 
 
-def format_output(pomodoro_data, always, icon_text):
+def format_output(pomodoro_data, always, icon_text, show_seconds):
 
     if pomodoro_data["state"] != "null":
         return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
-            pomodoro_data, icon_text
+            pomodoro_data, icon_text, show_seconds
         ))
     if always:
         return icon_text
@@ -76,11 +80,12 @@ def main():
 
 @click.command()
 @click.option('--always/--not-always', default=False)
+@click.option('--show-seconds/--no-seconds', default=True)
 @click.option('--icon-text', default="Pomodoro", help='What to show as icon.')
-def status(always, icon_text):
+def status(always, icon_text, show_seconds):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
-    click.echo(format_output(pomodoro_data, always, icon_text))
+    click.echo(format_output(pomodoro_data, always, icon_text, show_seconds))
 
 
 
