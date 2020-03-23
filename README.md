@@ -42,7 +42,7 @@ command -v gnome-pomodoro > /dev/null &&
     sudo rm /usr/bin/i3-gnome-pomodoro >& /dev/null;
     sudo cp pomodoro-client.py /usr/bin/i3-gnome-pomodoro &&
     /usr/bin/i3-gnome-pomodoro status
-) || echo "Installation failedd. Please make sure you have gnome-pomodoro installed, you must install it first"
+) || echo "Installation failed. Please make sure you have gnome-pomodoro installed."
 ```
 
 ### Terminal

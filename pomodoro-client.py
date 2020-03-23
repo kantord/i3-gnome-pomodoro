@@ -78,10 +78,15 @@ def format_output(pomodoro_data, always, icon_text, show_seconds):
 def main():
     pass
 
-@click.command()
-@click.option('--always/--not-always', default=False)
-@click.option('--show-seconds/--no-seconds', default=True)
+@click.option('--always/--not-always', default=False,
+              help="""Show a constant icon.""")
+@click.option('--show-seconds/--no-seconds', default=True,
+              help="""Show seconds in timers""")
 @click.option('--icon-text', default="Pomodoro", help='What to show as icon.')
+@click.command(help=
+               """
+               Returns a string descriping the current pomodoro state.
+               """)
 def status(always, icon_text, show_seconds):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
@@ -89,26 +94,26 @@ def status(always, icon_text, show_seconds):
 
 
 
-@click.command()
+@click.command(help="""Pauses the current pomodoro if any is running.""")
 def pause():
     get_pomodoro_proxy().Pause()
 
 
-@click.command()
+@click.command(help="""Resume pomodoro if paused.""")
 def resume():
     get_pomodoro_proxy().Resume()
 
 
-@click.command()
+@click.command(help="Start a pomodoro.")
 def start():
     get_pomodoro_proxy().Start()
 
 
-@click.command()
+@click.command(help="Stop current pomodoro.")
 def stop():
     get_pomodoro_proxy().Stop()
 
-@click.command()
+@click.command(help="Toggling function to start a pomodoro if none is running or stop the current one.")
 def start_stop():
     pomodoro = get_pomodoro_proxy()
     if pomodoro.State == 'null':
@@ -116,18 +121,18 @@ def start_stop():
     elif pomodoro.State == 'pomodoro':
         pomodoro.Stop()
 
-@click.command()
+@click.command(help="Skip the current activity.")
 def skip():
     get_pomodoro_proxy().Skip()
 
 
 @click.command()
-def reset():
+def reset(help="Reset the current pomodoro."):
     get_pomodoro_proxy().Reset()
 
 
 @click.command()
-def toggle():
+def toggle(help="Toggling function to pause/resume current pomodoro."):
     pomodoro = get_pomodoro_proxy()
     if pomodoro.IsPaused:
         pomodoro.Resume()
@@ -209,7 +214,7 @@ def pomodoro_daemon():
     GLib.MainLoop().run()
 
 
-@click.command()
+@click.command(help="Disable certain workspaces during pomodoro")
 @click.argument('workspaces_disabled_during_pomodoro', nargs=-1, type=int)
 @click.option('--nagbar/--no-nagbar', default=False)
 def daemon(workspaces_disabled_during_pomodoro, nagbar):
