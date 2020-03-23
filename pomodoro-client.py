@@ -22,14 +22,12 @@ def get_pomodoro_proxy():
 
 
 def format_time(seconds, show_seconds):
-    if show_seconds:
-        return "{minutes:02d}:{seconds:02d}".format(
-            minutes=int(math.floor(seconds / 60)),
-            seconds=int(round(seconds % 60))
-        )
-    return "{minutes:02d}m".format(
-            minutes=int(math.floor(seconds / 60)),
-        )
+    time = "{minutes:02d}".format(minutes=int(math.floor(seconds / 60))) + (
+        ":{seconds:02d}".format(seconds=int(round(seconds % 60))) if show_seconds 
+        else "m"
+    )
+
+    return time
 
 
 def format_is_paused(is_paused):
