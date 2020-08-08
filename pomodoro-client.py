@@ -21,7 +21,7 @@ def get_pomodoro_proxy():
     return bus.get("org.gnome.Pomodoro", "/org/gnome/Pomodoro")
 
 
-def format_time(seconds, show_seconds): 
+def format_time(seconds, show_seconds):
     time = "{minutes:02d}".format(minutes=int(math.floor(round(seconds)/60))) + (
         ":{seconds:02d}".format(seconds=int(round(seconds) % 60)) if show_seconds
         else "m"
