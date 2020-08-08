@@ -22,8 +22,8 @@ def get_pomodoro_proxy():
 
 
 def format_time(seconds, show_seconds):
-    time = "{minutes:02d}".format(minutes=int(math.floor(seconds / 60))) + (
-        ":{seconds:02d}".format(seconds=int(round(seconds % 60))) if show_seconds 
+    time = "{minutes:02d}".format(minutes=int(math.floor(round(seconds)/60))) + (
+        ":{seconds:02d}".format(seconds=int(round(seconds) % 60)) if show_seconds
         else "m"
     )
 
