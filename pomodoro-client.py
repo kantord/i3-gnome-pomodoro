@@ -30,8 +30,8 @@ def format_time(seconds, show_seconds):
     return time
 
 
-def format_is_paused(is_paused, waybar):
-    if waybar:
+def format_is_paused(is_paused, format):
+    if format == 'waybar':
         return "paused" if is_paused else ""
     return " PAUSED " if is_paused else ""
 
@@ -53,35 +53,35 @@ def extract_pomodoro_data(pomodoro):
     }
 
 
-def format_pomodoro_data(pomodoro_data, icon_text, show_seconds, waybar):
+def format_pomodoro_data(pomodoro_data, icon_text, show_seconds, format):
     return {
         "elapsed": format_time(pomodoro_data["elapsed"], show_seconds),
         "duration": format_time(pomodoro_data["duration"], show_seconds),
         "remaining": format_time(pomodoro_data["remaining"], show_seconds),
-        "is_paused": format_is_paused(pomodoro_data["is_paused"], waybar),
+        "is_paused": format_is_paused(pomodoro_data["is_paused"], format),
         "state": format_state(pomodoro_data["state"], icon_text),
     }
 
 
-def format_output(pomodoro_data, always, icon_text, show_seconds, waybar):
+def format_output_text(pomodoro_data, always, icon_text, show_seconds, format):
 
     if pomodoro_data["state"] != "null":
         return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
-            pomodoro_data, icon_text, show_seconds, waybar
+            pomodoro_data, icon_text, show_seconds, format
         ))
     if always:
         return icon_text
     return ""
 
 
-def format_output_waybar(pomodoro_data, always, icon_text, show_seconds, waybar):
+def format_output_waybar(pomodoro_data, always, icon_text, show_seconds, format):
     import json
 
     output = {"class": "stopped", "text": "", "tooltip": ""}
     if pomodoro_data["state"] != "null":
         if icon_text != "":
             icon_text = icon_text + " "
-        data = format_pomodoro_data(pomodoro_data, icon_text, show_seconds, waybar)
+        data = format_pomodoro_data(pomodoro_data, icon_text, show_seconds, format)
         output["class"] = data["is_paused"]
         output["text"] = "{}{}".format(icon_text, data["remaining"])
         output["tooltip"] = "Elapsed: {}\nRemaining: {}".format(
@@ -93,6 +93,17 @@ def format_output_waybar(pomodoro_data, always, icon_text, show_seconds, waybar)
         return json.dumps(output)
 
 
+def format_output(pomodoro_data, always, icon_text, show_seconds, format="text"):
+
+    if pomodoro_data["state"] != "null":
+        return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
+            pomodoro_data, icon_text, show_seconds, format
+        ))
+    if always:
+        return icon_text
+    return ""
+
+
 @click.group()
 def main():
     pass
@@ -102,18 +113,18 @@ def main():
 @click.option('--show-seconds/--no-seconds', default=True,
               help="""Show seconds in timers""")
 @click.option('--icon-text', default="Pomodoro", help='What to show as icon.')
-@click.option("--waybar/--no-waybar", default=False, help="""Show waybar JSON output""")
+@click.option("--format", default="text", help="""Output format, 'text' or 'waybar', default 'text'""")
 @click.command(help=
                """
                Returns a string descriping the current pomodoro state.
                """)
-def status(always, icon_text, show_seconds, waybar):
+def status(always, icon_text, show_seconds, format):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
-    if waybar:
-        click.echo(format_output_waybar(pomodoro_data, always, icon_text, show_seconds, waybar))
+    if format == 'waybar':
+        click.echo(format_output_waybar(pomodoro_data, always, icon_text, show_seconds, format))
     else:
-        click.echo(format_output(pomodoro_data, always, icon_text, show_seconds, waybar))
+        click.echo(format_output_text(pomodoro_data, always, icon_text, show_seconds, format))
 
 
 @click.command(help="""Pauses the current pomodoro if any is running.""")
