@@ -1,5 +1,5 @@
 # i3-gnome-pomodoro
-Integrate gnome-pomodoro into i3. Support i3bar and polybar.
+Integrate gnome-pomodoro into i3. Support i3bar, polybar and waybar.
 
 Here's what i3-gnome-pomodoro looks like on my i3bar:
 ![Pomodoro 24:45 |  075%    uvsFvTK7SffCNaP9 |  |    100% |    100% |    55°C |  24.6 GB |    01. 07    23.19 |  70%](screenshot.png?raw=true)
@@ -107,6 +107,33 @@ click-right = i3-gnome-pomodoro start_stop
 exec = i3-gnome-pomodoro status --always
 interval = 1
 
+```
+
+### waybar
+
+I use the following module in waybar
+
+config
+
+```
+ "custom/pomodoro": {
+    "exec": "i3-gnome-pomodoro status --format=waybar --show-seconds",
+     "return-type": "json",
+     "interval": 1,
+     "format": "Pomodoro {}",
+     "on-click": "i3-gnome-pomodoro start",
+     "on-middle-click": "i3-gnome-pomodoro toggle",
+     "on-right-click": "i3-gnome-pomodoro stop",
+ },
+
+```
+
+style.css
+
+```css
+#custom-pomodoro.paused {
+  border-bottom: 3px solid @yellow;
+}
 ```
 
 ### Refresh rate
