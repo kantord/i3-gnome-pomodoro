@@ -7,11 +7,12 @@ from threading import Thread
 import click
 import i3ipc
 import math
+import os
 
 
 bus = SessionBus()
 
-
+           
 def get_notification_proxy():
     return bus.get(
         "org.freedesktop.Notifications", "/org/freedesktop/Notifications")
@@ -102,6 +103,14 @@ def format_output(pomodoro_data, always, icon_text, show_seconds, format="text")
     if always:
         return icon_text
     return ""
+
+
+def detect_nagbar():
+    with open(os.devnull, "w") as devnull:
+        if subprocess.call(["pgrep", "i3"], stdout=devnull) == 0:
+            return "i3-nagbar"
+        else:
+            return "swaynag"
 
 
 @click.group()
@@ -195,10 +204,8 @@ def handle_state(state, old_state):
 
 
 def show_message(message, is_error=False):
-    nagbar = ["swaynag", "i3-nagbar"]
     type_ = "error" if is_error else "warning"
-    for command in nagbar:
-        Popen('%s -t %s -m "%s"' % (command, type_, message), shell=True)
+    Popen('%s -t %s -m "%s"' % (detect_nagbar(), type_, message), shell=True)
 
 
 def get_focused_workspace(i3):
