@@ -48,15 +48,15 @@ command -v gnome-pomodoro > /dev/null &&
 ```
 
 ### Terminal
-Timer status can be viewed by simply running `python pomodoro-client.py`. Example output:
+Timer status can be viewed by simply running `./pomodoro-client.py`. Example output:
 
-    $ python pomodoro-client.py status
+    $ ./pomodoro-client.py status
     Pomodoro 15:35
 
 The timer state can be manipulated using the commands `pause`, `resume`, `start`,
 `stop`, `skip`, `toggle` and `reset`. For example:
 
-    $ python pomodoro-client.py pause
+    $ ./pomodoro-client.py pause
 
 
 ### i3bar
@@ -67,7 +67,7 @@ Unfortunately, i3status cannot be used to display a custom feature on i3bar. How
 i3status -c ~/.i3/i3status.conf | while :
 do
   read line
-  pomodoro=`python ~/repos/i3-gnome-pomodoro/pomodoro-client.py status`
+  pomodoro=`~/repos/i3-gnome-pomodoro/pomodoro-client.py status`
   echo "$pomodoro| $line" || exit 1
 done
 ```
@@ -148,10 +148,10 @@ general {
 ### Keyboard shortcuts
 I use the following key bindings in my i3 config:
 ```
-bindsym $mod+F9 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py start"
-bindsym $mod+F10 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py toggle"
-bindsym $mod+F11 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py skip"
-bindsym $mod+F12 exec "python ~/repos/i3-gnome-pomodoro/pomodoro-client.py stop"
+bindsym $mod+F9 exec "~/repos/i3-gnome-pomodoro/pomodoro-client.py start"
+bindsym $mod+F10 exec "~/repos/i3-gnome-pomodoro/pomodoro-client.py toggle"
+bindsym $mod+F11 exec "~/repos/i3-gnome-pomodoro/pomodoro-client.py skip"
+bindsym $mod+F12 exec "~/repos/i3-gnome-pomodoro/pomodoro-client.py stop"
 ```
 
 
@@ -162,7 +162,7 @@ notifications. To use this daemon, launch it manually when needed or add this
 to your i3 configuration to launch it on startup:
 
 ```
-exec python ~/repos/i3-gnome-pomodoro/pomodoro-client.py daemon &
+exec ~/repos/i3-gnome-pomodoro/pomodoro-client.py daemon &
 ```
 
 If you want to disable any workspaces during your pomodoro, you can do so by
@@ -171,7 +171,7 @@ for IM, Social Media and Workspace 9 for email. Therefore I want them disabled
 while I'm on a pomodoro. So, I execute my daemon like this:
 
 ```
-exec python ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 &
+exec ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 &
 ```
 
 This works even if you label your workspaces. For example, I use the name "9: mail"
@@ -180,5 +180,5 @@ for my email workspace but I still reference it with "9".
 I also like to have a nagbar warning shown when I still try to access a distracting workspace:
 
 ```
-exec python ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 --nagbar &
+exec ~/repos/i3-gnome-/pomodoro-client.py daemon 9 10 --nagbar &
 ```
