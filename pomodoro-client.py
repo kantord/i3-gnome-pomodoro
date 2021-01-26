@@ -2,7 +2,7 @@
 
 from gi.repository import GLib
 from pydbus import SessionBus
-from subprocess import Popen
+import subprocess
 from threading import Thread
 import click
 import i3ipc
@@ -12,7 +12,7 @@ import os
 
 bus = SessionBus()
 
-           
+
 def get_notification_proxy():
     return bus.get(
         "org.freedesktop.Notifications", "/org/freedesktop/Notifications")
@@ -65,7 +65,6 @@ def format_pomodoro_data(pomodoro_data, icon_text, show_seconds, format):
 
 
 def format_output_text(pomodoro_data, always, icon_text, show_seconds, format):
-
     if pomodoro_data["state"] != "null":
         return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
             pomodoro_data, icon_text, show_seconds, format
@@ -82,7 +81,8 @@ def format_output_waybar(pomodoro_data, always, icon_text, show_seconds, format)
     if pomodoro_data["state"] != "null":
         if icon_text != "":
             icon_text = icon_text + " "
-        data = format_pomodoro_data(pomodoro_data, icon_text, show_seconds, format)
+        data = format_pomodoro_data(
+            pomodoro_data, icon_text, show_seconds, format)
         output["class"] = data["is_paused"]
         output["text"] = "{}{}".format(icon_text, data["remaining"])
         output["tooltip"] = "Elapsed: {}\nRemaining: {}".format(
@@ -117,23 +117,25 @@ def detect_nagbar():
 def main():
     pass
 
+
 @click.option('--always/--not-always', default=False,
               help="""Show a constant icon.""")
 @click.option('--show-seconds/--no-seconds', default=True,
               help="""Show seconds in timers""")
 @click.option('--icon-text', default="Pomodoro", help='What to show as icon.')
 @click.option("--format", default="text", help="""Output format, 'text' or 'waybar', default 'text'""")
-@click.command(help=
-               """
+@click.command(help="""
                Returns a string descriping the current pomodoro state.
                """)
 def status(always, icon_text, show_seconds, format):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
     if format == 'waybar':
-        click.echo(format_output_waybar(pomodoro_data, always, icon_text, show_seconds, format))
+        click.echo(format_output_waybar(pomodoro_data,
+                                        always, icon_text, show_seconds, format))
     else:
-        click.echo(format_output_text(pomodoro_data, always, icon_text, show_seconds, format))
+        click.echo(format_output_text(pomodoro_data,
+                                      always, icon_text, show_seconds, format))
 
 
 @click.command(help="""Pauses the current pomodoro if any is running.""")
@@ -154,6 +156,7 @@ def start():
 @click.command(help="Stop current pomodoro.")
 def stop():
     get_pomodoro_proxy().Stop()
+
 
 @click.command(help="Toggling function to start a pomodoro if none is running or stop the current one.")
 def start_stop():
@@ -205,7 +208,8 @@ def handle_state(state, old_state):
 
 def show_message(message, is_error=False):
     type_ = "error" if is_error else "warning"
-    Popen('%s -t %s -m "%s"' % (detect_nagbar(), type_, message), shell=True)
+    subprocess.Popen('%s -t %s -m "%s"' %
+                     (detect_nagbar(), type_, message), shell=True)
 
 
 def get_focused_workspace(i3):
