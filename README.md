@@ -47,6 +47,12 @@ command -v gnome-pomodoro > /dev/null &&
 ) || echo "Installation failed. Please make sure you have gnome-pomodoro installed."
 ```
 
+#### AUR
+`i3-gnome-pomodoro` is available on [AUR](https://aur.archlinux.org/packages/i3-gnome-pomodoro-git), you can install it with your favorite package manager:
+``` sh
+$ yay -S i3-gnome-pomodoro-git
+```
+
 ### Terminal
 Timer status can be viewed by simply running `./pomodoro-client.py`. Example output:
 
