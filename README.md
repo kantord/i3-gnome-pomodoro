@@ -128,8 +128,8 @@ config
      "interval": 1,
      "format": "Pomodoro {}",
      "on-click": "i3-gnome-pomodoro start",
-     "on-middle-click": "i3-gnome-pomodoro toggle",
-     "on-right-click": "i3-gnome-pomodoro stop",
+     "on-click-middle": "i3-gnome-pomodoro toggle",
+     "on-click-right": "i3-gnome-pomodoro stop",
  },
 
 ```
