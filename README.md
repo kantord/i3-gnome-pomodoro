@@ -151,6 +151,11 @@ general {
 }
 ```
 
+### Blinkstick
+
+You can reflect your Pomodoro status on a Blinkstick by using the `--blinkstick` flag
+in the status command.
+
 ### Keyboard shortcuts
 I use the following key bindings in my i3 config:
 ```

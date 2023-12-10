@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "i3-gnome-pomodoro"
+version = "0.1.0"
+description = ""
+authors = ["Daniel Kantor <git@daniel-kantor.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pygobject = "^3.46.0"
+pydbus = "^0.6.0"
+click = "^8.1.7"
+i3ipc = "^2.2.1"
+blinkstick = "^1.2.0"
+pyusb = "^1.2.1"
+
+
+[tool.poetry.scripts]
+i3-gnome-pomodoro = "i3_gnome_pomodoro.pomodoro_client:main"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

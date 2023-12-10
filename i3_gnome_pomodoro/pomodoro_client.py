@@ -14,8 +14,7 @@ bus = SessionBus()
 
 
 def get_notification_proxy():
-    return bus.get(
-        "org.freedesktop.Notifications", "/org/freedesktop/Notifications")
+    return bus.get("org.freedesktop.Notifications", "/org/freedesktop/Notifications")
 
 
 def get_pomodoro_proxy():
@@ -23,8 +22,9 @@ def get_pomodoro_proxy():
 
 
 def format_time(seconds, show_seconds):
-    time = "{minutes:02d}".format(minutes=int(math.floor(round(seconds)/60))) + (
-        ":{seconds:02d}".format(seconds=int(round(seconds) % 60)) if show_seconds
+    time = "{minutes:02d}".format(minutes=int(math.floor(round(seconds) / 60))) + (
+        ":{seconds:02d}".format(seconds=int(round(seconds) % 60))
+        if show_seconds
         else "m"
     )
 
@@ -32,7 +32,7 @@ def format_time(seconds, show_seconds):
 
 
 def format_is_paused(is_paused, format):
-    if format == 'waybar':
+    if format == "waybar":
         return "paused" if is_paused else ""
     return " PAUSED " if is_paused else ""
 
@@ -47,10 +47,11 @@ def format_state(state, icon_text):
 
 def extract_pomodoro_data(pomodoro):
     return {
-        "elapsed": pomodoro.Elapsed, "is_paused": pomodoro.IsPaused,
+        "elapsed": pomodoro.Elapsed,
+        "is_paused": pomodoro.IsPaused,
         "duration": pomodoro.StateDuration,
         "remaining": pomodoro.StateDuration - pomodoro.Elapsed,
-        "state": pomodoro.State
+        "state": pomodoro.State,
     }
 
 
@@ -66,9 +67,9 @@ def format_pomodoro_data(pomodoro_data, icon_text, show_seconds, format):
 
 def format_output_text(pomodoro_data, always, icon_text, show_seconds, format):
     if pomodoro_data["state"] != "null":
-        return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
-            pomodoro_data, icon_text, show_seconds, format
-        ))
+        return "{state} {remaining} {is_paused}".format(
+            **format_pomodoro_data(pomodoro_data, icon_text, show_seconds, format)
+        )
     if always:
         return icon_text
     return ""
@@ -81,8 +82,7 @@ def format_output_waybar(pomodoro_data, always, icon_text, show_seconds, format)
     if pomodoro_data["state"] != "null":
         if icon_text != "":
             icon_text = icon_text + " "
-        data = format_pomodoro_data(
-            pomodoro_data, icon_text, show_seconds, format)
+        data = format_pomodoro_data(pomodoro_data, icon_text, show_seconds, format)
         output["class"] = data["is_paused"]
         output["text"] = "{}{}".format(icon_text, data["remaining"])
         output["tooltip"] = "Elapsed: {}\nRemaining: {}".format(
@@ -90,16 +90,15 @@ def format_output_waybar(pomodoro_data, always, icon_text, show_seconds, format)
         )
         return json.dumps(output)
     if always:
-        output['text'] = icon_text
+        output["text"] = icon_text
         return json.dumps(output)
 
 
 def format_output(pomodoro_data, always, icon_text, show_seconds, format="text"):
-
     if pomodoro_data["state"] != "null":
-        return "{state} {remaining} {is_paused}".format(**format_pomodoro_data(
-            pomodoro_data, icon_text, show_seconds, format
-        ))
+        return "{state} {remaining} {is_paused}".format(
+            **format_pomodoro_data(pomodoro_data, icon_text, show_seconds, format)
+        )
     if always:
         return icon_text
     return ""
@@ -113,29 +112,62 @@ def detect_nagbar():
             return "swaynag"
 
 
+def set_blinkstick_color(color_hex):
+    from blinkstick import blinkstick
+
+    for device in blinkstick.find_all():
+        device.set_color(hex=color_hex)
+
+
+def format_blinkstick(pomodoro_data):
+    color = {
+        "pomodoro": "#ff0000",
+        "short-break": "#00ff00",
+        "long-break": "#0000ff",
+        "null": "#000000",
+    }[pomodoro_data["state"]]
+    set_blinkstick_color(color)
+
+
 @click.group()
 def main():
     pass
 
 
-@click.option('--always/--not-always', default=False,
-              help="""Show a constant icon.""")
-@click.option('--show-seconds/--no-seconds', default=True,
-              help="""Show seconds in timers""")
-@click.option('--icon-text', default="Pomodoro", help='What to show as icon.')
-@click.option("--format", default="text", help="""Output format, 'text' or 'waybar', default 'text'""")
-@click.command(help="""
+@click.option(
+    "--blinkstick/--no-blinkstick",
+    default=False,
+    help="""Display status using a blinkstick LED""",
+)
+@click.option("--always/--not-always", default=False, help="""Show a constant icon.""")
+@click.option(
+    "--show-seconds/--no-seconds", default=True, help="""Show seconds in timers"""
+)
+@click.option("--icon-text", default="Pomodoro", help="What to show as icon.")
+@click.option(
+    "--format",
+    default="text",
+    help="""Output format, 'text' or 'waybar', default 'text'""",
+)
+@click.command(
+    help="""
                Returns a string descriping the current pomodoro state.
-               """)
-def status(always, icon_text, show_seconds, format):
+               """
+)
+def status(always, icon_text, show_seconds, format, blinkstick):
     pomodoro = get_pomodoro_proxy()
     pomodoro_data = extract_pomodoro_data(pomodoro)
-    if format == 'waybar':
-        click.echo(format_output_waybar(pomodoro_data,
-                                        always, icon_text, show_seconds, format))
+    if blinkstick:
+        format_blinkstick(pomodoro_data)
+
+    if format == "waybar":
+        click.echo(
+            format_output_waybar(pomodoro_data, always, icon_text, show_seconds, format)
+        )
     else:
-        click.echo(format_output_text(pomodoro_data,
-                                      always, icon_text, show_seconds, format))
+        click.echo(
+            format_output_text(pomodoro_data, always, icon_text, show_seconds, format)
+        )
 
 
 @click.command(help="""Pauses the current pomodoro if any is running.""")
@@ -158,12 +190,14 @@ def stop():
     get_pomodoro_proxy().Stop()
 
 
-@click.command(help="Toggling function to start a pomodoro if none is running or stop the current one.")
+@click.command(
+    help="Toggling function to start a pomodoro if none is running or stop the current one."
+)
 def start_stop():
     pomodoro = get_pomodoro_proxy()
-    if pomodoro.State == 'null':
+    if pomodoro.State == "null":
         pomodoro.Start()
-    elif pomodoro.State == 'pomodoro':
+    elif pomodoro.State == "pomodoro":
         pomodoro.Stop()
 
 
@@ -208,8 +242,7 @@ def handle_state(state, old_state):
 
 def show_message(message, is_error=False):
     type_ = "error" if is_error else "warning"
-    subprocess.Popen('%s -t %s -m "%s"' %
-                     (detect_nagbar(), type_, message), shell=True)
+    subprocess.Popen('%s -t %s -m "%s"' % (detect_nagbar(), type_, message), shell=True)
 
 
 def get_focused_workspace(i3):
@@ -236,8 +269,9 @@ def handle_workspace_focus(i3, i3_state, allowed_workspace, nagbar):
         if not allowed_workspace(e.current.num):
             activate_workspace(i3, i3_state["focused_workspace_name"])
             if nagbar:
-                show_message("Workspace %s is not allowed during a pomodoro"
-                             % e.current.name)
+                show_message(
+                    "Workspace %s is not allowed during a pomodoro" % e.current.name
+                )
         i3_state["focused_workspace_name"] = e.current.name
 
     return handler
@@ -247,11 +281,11 @@ def i3_daemon(disabled_during_pomodoro, nagbar):
     def generated_daemon():
         workspace_policy = create_workspace_policy(disabled_during_pomodoro)
         i3 = i3ipc.Connection()
-        i3_state = {
-            "focused_workspace_name": get_focused_workspace(i3).name
-        }
-        i3.on('workspace::focus', handle_workspace_focus(
-            i3, i3_state, workspace_policy, nagbar))
+        i3_state = {"focused_workspace_name": get_focused_workspace(i3).name}
+        i3.on(
+            "workspace::focus",
+            handle_workspace_focus(i3, i3_state, workspace_policy, nagbar),
+        )
         i3.main()
 
     return generated_daemon
@@ -264,11 +298,13 @@ def pomodoro_daemon():
 
 
 @click.command(help="Disable certain workspaces during pomodoro")
-@click.argument('workspaces_disabled_during_pomodoro', nargs=-1, type=int)
-@click.option('--nagbar/--no-nagbar', default=False)
+@click.argument("workspaces_disabled_during_pomodoro", nargs=-1, type=int)
+@click.option("--nagbar/--no-nagbar", default=False)
 def daemon(workspaces_disabled_during_pomodoro, nagbar):
     daemon_commands = [
-        i3_daemon(workspaces_disabled_during_pomodoro, nagbar), pomodoro_daemon]
+        i3_daemon(workspaces_disabled_during_pomodoro, nagbar),
+        pomodoro_daemon,
+    ]
     threads = [Thread(target=command) for command in daemon_commands]
     for thread in threads:
         thread.daemon = True
