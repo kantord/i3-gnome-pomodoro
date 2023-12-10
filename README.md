@@ -20,38 +20,35 @@ i3-gnome-pomodoro uses dbus to integrate gnome-pomodoro into i3. Currently it su
 - *Optionally* displaying a nagbar warning if you try to access a workspace that you have disabled during your pomodoro.
 
 ## Usage and setup
-### Dependencies
-i3-gnome-pomodoro needs the following Python packages to be installed:
-* pygobject
-* click
-* pydbus
-* i3ipc
 
-You can install them using `pip install -r requirements.txt`. Might require `sudo` when installing system-wide. Obviously, you'll also need to have [gnome-pomodoro](http://gnomepomodoro.org/) installed already.
-That's it. i3-gnome-pomodoro then should work from the terminal out-of-the-box. But to make it more integrated into i3 and more convenient to use, you might want to set it up with i3bar and put key bindings into your i3 config. So please read along!
+### Install
 
-I run i3-gnome-pomodoro on Arch Linux with Python 3.6.4, but it should work with other Python 3 binaries as well.
+To install 3i-gnome-pomodoro, you can use pipx:
 
-### Installation
-Just run this script in your terminal to install i3-gnome-pomodoro
-``` sh
-command -v gnome-pomodoro > /dev/null && 
-(
-    cd $(mktemp -d) &&
-    $(which git) clone https://github.com/kantord/i3-gnome-pomodoro &&
-    cd i3-gnome-pomodoro &&
-    sudo $(which pip3) install -r requirements.txt --ignore-installed &&
-    sudo rm /usr/bin/i3-gnome-pomodoro >& /dev/null;
-    sudo cp pomodoro-client.py /usr/bin/i3-gnome-pomodoro &&
-    /usr/bin/i3-gnome-pomodoro status
-) || echo "Installation failed. Please make sure you have gnome-pomodoro installed."
+```bash
+pipx install i3-gnome-pomodoro
 ```
 
+This is the recommended way.
+
 #### AUR
+**Note:** The recommended way to install i3-gnome-pomodoro is through pipx. The AUR package is not maintained
+by me.
+
 `i3-gnome-pomodoro` is available on [AUR](https://aur.archlinux.org/packages/i3-gnome-pomodoro-git), you can install it with your favorite package manager:
 ``` sh
 $ yay -S i3-gnome-pomodoro-git
 ```
+
+#### Local development
+
+Use `poetry` to install local development dependencies:
+
+```bash
+poetry install
+```
+
+This is not required for normal usage, only if you want to make changes to i3-gnome-pomodoro.
 
 ### Terminal
 Timer status can be viewed by simply running `./pomodoro-client.py`. Example output:
