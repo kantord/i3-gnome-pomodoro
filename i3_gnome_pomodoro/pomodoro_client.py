@@ -18,12 +18,12 @@ def get_notification_proxy():
 
 
 def get_pomodoro_proxy():
-    return bus.get("org.gnome.Pomodoro", "/org/gnome/Pomodoro")
+    return bus.get("io.github.focustimerhq.FocusTimer", "/io/github/focustimerhq/FocusTimer")
 
 
 def format_time(seconds, show_seconds):
-    time = "{minutes:02d}".format(minutes=int(math.floor(round(seconds) / 60))) + (
-        ":{seconds:02d}".format(seconds=int(round(seconds) % 60))
+    time = "{minutes:02d}".format(minutes=int(math.floor(round(seconds/1000000) / 60))) + (
+        ":{seconds:02d}".format(seconds=int(round(seconds/1000000) % 60))
         if show_seconds
         else "m"
     )
@@ -42,15 +42,16 @@ def format_state(state, icon_text):
         "pomodoro": icon_text,
         "short-break": "Break",
         "long-break": "Long Break",
+        "stopped": "\n",
     }[state]
 
 
 def extract_pomodoro_data(pomodoro):
     return {
-        "elapsed": pomodoro.Elapsed,
-        "is_paused": pomodoro.IsPaused,
-        "duration": pomodoro.StateDuration,
-        "remaining": pomodoro.StateDuration - pomodoro.Elapsed,
+        "elapsed": pomodoro.GetElapsed(-1),
+        "is_paused": pomodoro.IsPaused(),
+        "duration": pomodoro.Duration,
+        "remaining": pomodoro.GetRemaining(-1), 
         "state": pomodoro.State,
     }
 
@@ -195,7 +196,7 @@ def stop():
 )
 def start_stop():
     pomodoro = get_pomodoro_proxy()
-    if pomodoro.State == "null":
+    if pomodoro.State == "stopped":
         pomodoro.Start()
     elif pomodoro.State == "pomodoro":
         pomodoro.Stop()
@@ -214,8 +215,14 @@ def reset(help="Reset the current pomodoro."):
 @click.command()
 def toggle(help="Toggling function to pause/resume current pomodoro."):
     pomodoro = get_pomodoro_proxy()
-    if pomodoro.IsPaused:
+    if pomodoro.IsPaused():
         pomodoro.Resume()
+    elif pomodoro.State == "short-break" or pomodoro.State == "long-break":
+        if pomodoro.IsFinished():
+            pomodoro.Stop()
+            pomodoro.Start()
+        else:
+            pomodoro.Pause()
     else:
         pomodoro.Pause()
 
