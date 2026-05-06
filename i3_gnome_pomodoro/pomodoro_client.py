@@ -217,6 +217,12 @@ def toggle(help="Toggling function to pause/resume current pomodoro."):
     pomodoro = get_pomodoro_proxy()
     if pomodoro.IsPaused():
         pomodoro.Resume()
+    elif pomodoro.State == "short-break" or pomodoro.State == "long-break":
+        if pomodoro.IsFinished():
+            pomodoro.Stop()
+            pomodoro.Start()
+        else:
+            pomodoro.Pause()
     else:
         pomodoro.Pause()
 
