@@ -92,6 +92,7 @@ def format_output_waybar(pomodoro_data, always, icon_text, show_seconds, format)
     if always:
         output["text"] = icon_text
         return json.dumps(output)
+    return json.dumps(output)
 
 
 def format_output(pomodoro_data, always, icon_text, show_seconds, format="text"):
